@@ -1,0 +1,39 @@
+.main power
+
+record
+    dll     ,D_ADDR
+    abuf    ,a80
+    xval    ,d4.1  ,10.2
+    yval    ,d4.1  ,2.1
+    result  ,d10.6
+.define tt 1
+.define power(a,b,c) dll_call(dll,DLL_TYPE_DBLCALL,"power",a,b,c)
+
+.proc
+
+    open(tt,o,"tt:")
+    xcall flags(7004020,1)
+
+    dll = %dll_open("mylib",1)
+
+    xcall s_bld(abuf,,"DBL: Calling C with xval=%d yval=%d",xval,yval)
+    writes(tt,%atrim(abuf))
+
+    xcall power(result,xval,yval)
+
+    xcall s_bld(abuf,,"DBL: Back from C, result=%d",result)
+    writes(tt,%atrim(abuf))
+
+    xcall dll_close(dll)
+
+    close tt
+    stop
+
+.end
+
+.subroutine sub1
+    a_result    ,n
+.proc
+    writes(tt, "DBL: Called from C, result is " + %string(a_result))
+    xreturn
+.end

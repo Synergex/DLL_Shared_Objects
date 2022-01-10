@@ -1,0 +1,38 @@
+# --------------------------
+# Shell script to build a custom shared object (myso.so)
+# for various platforms.
+#
+# Operating systems include: AIX, Digital Unix, HP-UX, Linux, SCO,
+# Solaris, and Unixware7. See makeusr.bat for the Windows build script.
+# ---------------------------
+#
+. $DBLDIR/csrc/makesys
+
+echo Compiling power.c
+
+$CC $COPTS -I $SDE/dbl/csrc -c power.c
+if [ $? -eq 0 ]; then
+
+    echo Linking mylib.so
+    $LD -o mylib.so power.o                \
+                    $LDPIC $LDOPTS $NRSLIB \
+                    $DBLDIR/lib/xclapi.o   \
+                    $DBLDIR/lib/xclapif.o
+    if [ $? -ne 0 ]; then
+        echo Failure during linkage
+    else
+        echo Successfully built mylib.so
+    fi
+else
+    echo Failure during compilation of power.c
+fi
+
+rm power.o
+
+echo Building test program...
+dbl -dXT power
+dblink -d power
+
+rm power.dbo
+
+dbr power

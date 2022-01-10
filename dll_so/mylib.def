@@ -1,0 +1,10 @@
+
+LIBRARY      mylib
+
+EXPORTS
+             xclapi_setup_ptr
+             power
+
+SECTIONS
+    .bss     READ WRITE
+    .data    READ WRITE
